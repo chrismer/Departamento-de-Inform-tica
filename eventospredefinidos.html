@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administracion de eventos predefinidos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/datatables.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-clockpicker.css" />
+    <link rel="stylesheet" href="css/fullcalendar.min.css" />
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/datatables.min.js"></script>
+    <script src="js/moment-with-locales.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="js/bootstrap-clockpicker.js"></script>
+    <script src="js/es.global.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 style="text-align: center;">Administracion de eventos predefinidos</h2>
+                <table class="table table-striped table-bordered table-hover" id="tabla1">
+                    <thead>
+                        <tr>
+                            <td>Evento</td>
+                            <td>Titulo</td>
+                            <td>Color de texto</td>
+                            <td>Color de fondo</td>
+                            <td>Hora de inicio</td>
+                            <td>Hora de fin</td>
+                            <td>Borrar</td>
+                        </tr>
+                    </thead>
+                </table>
+                <div style="text-align: center;">
+                    <button type="button" id="BotonAgregar" class="btn btn-success">Agregar Evento Predefinido</button>
+                    <button type="button" id="BotonSalir" class="btn btn-info">Ir a Calendario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario para agregar eventos predefindos -->
+    <div class="modal fade" id="FormularioEventosPredefinidos" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label>Evento Predefinido:</label>
+                            <input type="text" id="Titulo" class="form-control" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="">Color de fondo:</label>
+                        <input type="color" value="#3788D8" id="ColorFondo" class="form-control" style="height: 36px;">
+                    </div>
+                     <div class="form-row">
+                        <label for="">Color de Texto:</label>
+                        <input type="color" value="#FFFFFF" id="ColorTexto" class="form-control" style="height: 36px;">
+                    </div>
+                    <div class="form-row" id="TituloHoraInicio">
+                        <label for="">Hora de inicio:</label>
+                        <div class="input-group clockpicker" data-autoclose="true">
+                          <input type="text" class="form-control" value="" id="HoraInicio" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-row" id="TituloHoraFin">
+                        <label for="">Hora de finalizacion:</label>
+                        <div class="input-group clockpicker" data-autoclose="true">
+                          <input type="text" class="form-control" value="" id="HoraFin" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="BotonConfirmarAgregar" class="btn btn-primary">Confirmar</button>
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function (){
+
+            $('.clockpicker').clockpicker();
+
+            let tabla1 = $('#tabla1').DataTable({
+                "ajax": {
+                    url: 'datospredefinidos.php?accion=listar',
+                    dataSrc: ""
+                },
+                "columns": [
+                    {
+                        "data": "id"
+                    },
+                    {
+                        "data": "titulo"
+                    },
+                    {
+                        "data": "colortexto"
+                    },
+                    {
+                        "data": "colorfondo"
+                    },
+                    {
+                        "data": "horainicio"
+                    },
+                    {
+                        "data": "horafin"
+                    },
+                    {
+                        "data": null,
+                        "orderable": false
+                    }
+                    ],
+                    columnDefs: [{
+                        targets: -1,
+                        className: 'dt-body-center',
+                        "defaultContent": "<button class='btn btn-sm btn-danger botonborrar'> Borrar </button>",
+                        data: null
+                    },
+                    {
+                        targets: 1,
+                        className: 'dt-body-center',
+
+                    },
+                    {
+                        targets: 2,
+                        className: 'dt-body-center',
+                    }],
+                    "language": {
+                        "url": "datatables/spanish.json"
+                    },
+                    'rowCallback': function (row, data, index){
+                        $(row).find('td:eq(1)').css('color', data.colortexto);
+                        $(row).find('td:eq(1)').css('background-color', data.colorfondo);
+                    },
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "Todos"]
+                    ],
+            });
+            // Eventos de botones de la App
+
+            $('#BotonAgregar').click(function(){
+                $('#FormularioEventosPredefinidos').modal('show');
+                limpiarFormulario();
+            })
+
+            $('#BotonSalir').click(function (){
+                window.location = 'departamento.php';
+            })
+
+            //Agregar evento predefinido
+            $('#BotonConfirmarAgregar').click(function(){
+            let registro = recuperarDatosFormulario();
+            agregarRegistro(registro);
+            // $('#FormularioEventos').modal('hide');
+            });
+
+            //Boton Borrar
+            $('#BotonBorrar').click(function(){
+                let registro = recuperarDatosFormulario();
+                borrarRegistro(registro);
+            });
+
+            //Funciones para comunicarse con el server via AJAX
+            function agregarRegistro(registro){
+                $.ajax({
+                    type: 'POST',
+                    url: 'datospredefinidos.php?accion=agregar',
+                    data: registro,
+                    success: function(msg){
+                        tabla1.ajax.reload();
+                        $('#FormularioEventosPredefinidos').modal('hide');
+                    },
+                    error: function(error){
+                        console.error('que error muestra?', error);
+                        alert('hubo un error al agregar un evento' + error);
+                    }
+                });
+            }
+
+            // $('#tabla1 tbody').on('click', '.botonborrar', function () {
+            //     let data = tabla1.row($(this).parents('tr')).data();
+            //     if (data && data.id) {
+            //         if (confirm('¿Estás seguro de que quieres borrar el evento ' + data.titulo + '?')) {
+            //         borrarRegistro(data.id);
+            //         }
+            //     }
+            // });
+            $('#tabla1 tbody').on('click', 'button.botonborrar', function(){
+                let evento = tabla1.row($(this).parents('tr')).data();
+                if (confirm("¿Seguro que quieres eliminar el evento " + evento.titulo + "?")) {
+                    let registro = tabla1.row($(this).parents('tr')).data();
+                    borrarRegistro(registro);
+                }
+            });
+
+
+            // function borrarRegistro(idEvento) {
+            //     $.ajax({
+            //         type: 'POST',
+            //         url: 'datospredefinidos.php?accion=borrar',
+            //         data: { id: idEvento },
+            //         success: function (response) {
+            //         if (response) {
+            //             tabla1.ajax.reload();
+            //         } else {
+            //             alert('No se pudo borrar el evento.');
+            //         }
+            //         },
+            //         error: function (error) {
+            //         alert('Error al borrar el evento: ' + error);
+            //         }
+            //     });
+            // }
+
+            function borrarRegistro(registro) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'datospredefinidos.php?accion=borrar',
+                    data: registro,
+                    success: function(msg){
+                    tabla1.ajax.reload();
+                    },
+                    error: function(error){
+                    alert("Hubo un error al borrar el evento: " + error);
+                    }
+                });
+            }
+
+            // Funciones para el formulario de eventos
+            function limpiarFormulario(){
+                $('#Titulo').val('');
+                $('#HoraInicio').val('');
+                $('#HoraFin').val('');
+                $('#ColorFondo').val('#3788D8');
+                $('#ColorTexto').val('#ffffff');
+            }
+
+            function recuperarDatosFormulario(){
+                let registro = {
+                    titulo: $('#Titulo').val(),
+                    horainicio: $('#HoraInicio').val(),
+                    horafin: $('#HoraFin').val(),
+                    colorfondo: $('#ColorFondo').val(),
+                    colortexto: $('#ColorTexto').val(),
+                }
+                return registro;
+            }
+
+        });
+
+    </script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+</html>
