@@ -73,7 +73,7 @@ if(!isset($_SESSION['usuario'])){
         <div class="container-fluid">
           <section class="content-header d-flex justify-content-between align-items-center">
             <h1>Calendario</h1>
-            <h4>Hola @<strong><?php echo $_SESSION['usuario']; ?></strong> </h4>
+            <h4>Hola @<strong id="userName"><?php echo $_SESSION['usuario']; ?></strong> </h4>
             <h4><a href="logout.php" class="btn btn-outline-danger">Cerrar Sesion</a></h4>
           </section>
           <div class="row">

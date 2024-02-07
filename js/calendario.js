@@ -58,6 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
         eventClick: function (info) {
             $('#BotonAgregar').hide();
 
+            let usuarioCreadorEvento = info.event.extendedProps.usuario;
+            let usuarioLogueado = $('#userName').text();
+            
             $('#Id').val(info.event.id);
             $('#Titulo').val(info.event.title);
             $('#Descripcion').val(info.event.extendedProps.descripcion);
@@ -67,6 +70,14 @@ document.addEventListener("DOMContentLoaded", function () {
             $('#HoraFin').val(moment.utc(info.event.end).format('HH:mm'));
             $('#ColorFondo').val(info.event.backgroundColor);
             $('#ColorTexto').val(info.event.textColor);
+
+            if (usuarioCreadorEvento === usuarioLogueado) {
+                $('#BotonModificar').show();
+                $('#BotonBorrar').show();
+            } else {
+                $('#BotonModificar').hide();
+                $('#BotonBorrar').hide();
+            }
 
             $('#FormularioEventos').modal('show');
         },
@@ -221,6 +232,7 @@ function limpiarFormulario() {
 function recuperarDatosFormulario() {
     let registro = {
         id: $('#Id').val(),
+        usuario: $('#userName').val(),
         titulo: $('#Titulo').val(),
         descripcion: $('#Descripcion').val(),
         inicio: $('#FechaInicio').val() + ' ' + $('#HoraInicio').val(),
