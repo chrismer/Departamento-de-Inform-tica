@@ -58,10 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
         eventClick: function (info) {
             $('#BotonAgregar').hide();
 
-            let usuarioCreadorEvento = info.event.extendedProps.usuario;
+            let usuarioCreadorEvento = info.event.extendedProps.usuario || 'Anónimo';
             let usuarioLogueado = $('#userName').text();
             
             $('#Id').val(info.event.id);
+            $('#Created').text('@' + usuarioCreadorEvento);
             $('#Titulo').val(info.event.title);
             $('#Descripcion').val(info.event.extendedProps.descripcion);
             $('#FechaInicio').val(moment(info.event.start).format('YYYY-MM-DD'));
@@ -219,6 +220,7 @@ function agregarEventoPredefinido(registro) {
 // funciones que interactuan con el FormularioEventos
 function limpiarFormulario() {
     $('#Id').val('');
+    $('#Created').text('');
     $('#Titulo').val('');
     $('#FechaInicio').val('');
     $('#HoraInicio').val('');
@@ -232,6 +234,7 @@ function limpiarFormulario() {
 function recuperarDatosFormulario() {
     let registro = {
         id: $('#Id').val(),
+        usuario: $('#userCreated').val(),
         usuario: $('#userName').val(),
         titulo: $('#Titulo').val(),
         descripcion: $('#Descripcion').val(),

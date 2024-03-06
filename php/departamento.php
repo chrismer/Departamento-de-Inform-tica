@@ -120,6 +120,12 @@ if(!isset($_SESSION['usuario'])){
                 <input type="hidden" id="Id">
                 <div class="form-row">
                   <div class="form-group col-md-12">
+                    <label for="">Creado por:</label>
+                    <strong id="Created"></strong>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-12">
                     <label for="">Titulo del Evento:</label>
                     <input type="text" id="Titulo" class="form-control" placeholder="">
                   </div>
